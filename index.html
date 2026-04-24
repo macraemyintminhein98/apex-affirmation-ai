@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affirmation AI</title>
+    <meta name="description" content="Personalized AI Affirmation Generator.">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6; }
+        .container { max-width: 500px; padding: 2rem; background: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        #affirmations { display: none; margin-top: 1.5rem; }
+        .affirmation-item { background-color: #e5e7eb; padding: 0.75rem; border-radius: 0.375rem; margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold text-center mb-6">Affirmation AI</h1>
+        <p class="text-center text-gray-600 mb-6">Get personalized affirmations to crush your goals.</p>
+        <form id="affirmation-form" class="space-y-4">
+            <div>
+                <label for="goal" class="block text-sm font-medium text-gray-700">Your Goal or Fear:</label>
+                <textarea id="goal" name="goal" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="e.g., 'Overcome public speaking fear' or 'Achieve financial freedom'"></textarea>
+            </div>
+            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                Generate Affirmations
+            </button>
+        </form>
+
+        <div id="loading" class="text-center mt-4 hidden">
+            <p class="text-blue-500">Generating...</p>
+        </div>
+
+        <div id="affirmations">
+            <h2 class="text-xl font-semibold mb-3">Your Affirmations:</h2>
+            <div id="affirmation-list" class="space-y-2"></div>
+            <button id="buy-button" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mt-4">
+                Unlock Instant Access - $<span id="price">9.99</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        const form = document.getElementById('affirmation-form');
+        const goalInput = document.getElementById('goal');
+        const loadingDiv = document.getElementById('loading');
+        const affirmationsDiv = document.getElementById('affirmations');
+        const affirmationList = document.getElementById('affirmation-list');
+        const buyButton = document.getElementById('buy-button');
+        const priceSpan = document.getElementById('price');
+
+        // Mock API call for demonstration
+        const mockGenerateAffirmations = async (goal) => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const exampleAffirmations = [
+                        `I am confidently ${goal.toLowerCase().replace('overcome ', '').replace('achieve ', '')}.`,
+                        `Every day, I move closer to ${goal.toLowerCase().replace('overcome ', '').replace('achieve ', '')}.`,
+                        `My inner strength supports my journey to ${goal.toLowerCase().replace('overcome ', '').replace('achieve ', '')}.`,
+                        `I deserve to ${goal.toLowerCase().replace('overcome ', '').replace('achieve ', '')}.`,
+                        `I embrace the process of ${goal.toLowerCase().replace('overcome ', '').replace('achieve ', '')}.`
+                    ];
+                    resolve(exampleAffirmations.slice(0, Math.floor(Math.random() * 5) + 5)); // 5-10 affirmations
+                }, 2000);
+            });
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const goal = goalInput.value.trim();
+            if (!goal) return;
+
+            loadingDiv.classList.remove('hidden');
+            affirmationsDiv.style.display = 'none';
+            affirmationList.innerHTML = '';
+
+            const generated = await mockGenerateAffirmations(goal);
+
+            loadingDiv.classList.add('hidden');
+            affirmationsDiv.style.display = 'block';
+            generated.forEach(aff => {
+                const p = document.createElement('p');
+                p.classList.add('affirmation-item');
+                p.textContent = aff;
+                affirmationList.appendChild(p);
+            });
+
+            // In a real app, this would initiate Stripe Checkout for payment
+            buyButton.onclick = () => alert('Stripe Checkout integration would go here!');
+        });
+
+        priceSpan.textContent = '9.99'; // Dynamic price update placeholder
+    </script>
+</body>
+</html>
